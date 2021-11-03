@@ -14,13 +14,13 @@ public class VipController {
     @Autowired
     private IVipService vipService;
 
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<Iterable<Vip>> showAllVips() {
         Iterable<Vip> vips = vipService.findAll();
         return new ResponseEntity<>(vips, HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<Vip> addNewVip(@RequestBody Vip vip) {
         Vip vipResponse = vipService.save(vip);
         return new ResponseEntity<>(vipResponse, HttpStatus.CREATED);
