@@ -1,5 +1,6 @@
 package com.group3.models.music;
 
+import com.group3.models.category.Category;
 import com.group3.models.user.User;
 import lombok.Data;
 
@@ -31,4 +32,7 @@ public class Music {
 
     @ManyToOne
     private User user;
+
+    @ManyToOne
+    private Category category;
 }
