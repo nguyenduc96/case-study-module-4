@@ -1,5 +1,6 @@
 package com.group3.models.music;
 
+import com.group3.models.category.Category;
 import com.group3.models.user.User;
 import lombok.Data;
 
@@ -25,4 +26,6 @@ public class MusicRequest {
     private boolean vip = false;
 
     private User user;
+
+    private Category category;
 }
