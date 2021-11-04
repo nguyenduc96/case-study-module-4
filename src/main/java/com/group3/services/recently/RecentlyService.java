@@ -1,6 +1,8 @@
 package com.group3.services.recently;
 
 import com.group3.models.recently.Recently;
+import com.group3.repositories.recently.IRecentlyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -9,28 +11,31 @@ import java.util.Optional;
 
 @Service
 public class RecentlyService implements IRecentlyService {
+    @Autowired
+    private IRecentlyRepository recentlyRepository;
+
     @Override
     public Iterable<Recently> findAll() {
-        return null;
+        return recentlyRepository.findAll();
     }
 
     @Override
     public Page<Recently> findAll(Pageable pageable) {
-        return null;
+        return recentlyRepository.findAll(pageable);
     }
 
     @Override
     public Optional<Recently> findById(Long id) {
-        return Optional.empty();
+        return recentlyRepository.findById(id);
     }
 
     @Override
     public Recently save(Recently recently) {
-        return null;
+        return recentlyRepository.save(recently);
     }
 
     @Override
     public void remove(Long id) {
-
+        recentlyRepository.deleteById(id);
     }
 }

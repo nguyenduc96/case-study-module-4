@@ -40,4 +40,24 @@ public class ExceptionHelper {
     public ResponseEntity<?> nullPointer() {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity<?> numberFormat() {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ArrayIndexOutOfBoundsException.class)
+    public ResponseEntity<?> arrayIndexOutOfBounds() {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ClassCastException.class)
+    public ResponseEntity<?> classCast() {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ArithmeticException.class)
+    public ResponseEntity<?> arithmetic() {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }
