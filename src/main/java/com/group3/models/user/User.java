@@ -37,4 +37,20 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    public User() {
+    }
+
+    public User(Long id, String username, String password, String email, String phone, String fullName, Date birthday, String image, Date vip, List<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone = phone;
+        this.fullName = fullName;
+        this.birthday = birthday;
+        this.image = image;
+        this.vip = vip;
+        this.roles = roles;
+    }
 }
