@@ -60,4 +60,9 @@ public class UserService implements IUserService {
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    @Override
+    public Page<User> findByUsernameContaining(String username) {
+        return userRepository.findByUsernameContaining(username);
+    }
 }
