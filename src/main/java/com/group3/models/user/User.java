@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -30,5 +31,10 @@ public class User {
 
     private Date birthday;
 
+    private String image;
+
     private Date vip;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> roles;
 }
