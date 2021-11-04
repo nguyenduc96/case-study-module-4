@@ -21,6 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/musics")
+@CrossOrigin("*")
 public class MusicController {
     @Value("${file-upload}")
     private String fileUpload;
