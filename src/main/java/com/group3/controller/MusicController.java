@@ -2,7 +2,12 @@ package com.group3.controller;
 
 import com.group3.models.music.Music;
 import com.group3.models.music.MusicRequest;
+import com.group3.models.recently.Recently;
+import com.group3.models.user.User;
+import com.group3.models.user.UserPrinciple;
 import com.group3.services.music.IMusicService;
+import com.group3.services.recently.IRecentlyService;
+import com.group3.services.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -33,6 +38,12 @@ public class MusicController {
     @Autowired
     private IMusicService musicService;
 
+    @Autowired
+    private IUserService userService;
+
+    @Autowired
+    private IRecentlyService recentlyService;
+
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(name = "m") Optional<String> m, @PageableDefault(size = 5) Pageable pageable) {
         Page<Music> musicPage;
@@ -44,7 +55,7 @@ public class MusicController {
         return new ResponseEntity<>(musicPage, HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Music> create(MusicRequest musicRequest) throws IOException {
+    public ResponseEntity<Music> create(MusicRequest musicRequest, UserPrinciple userPrinciple) throws IOException {
         MultipartFile songMultipartFile = musicRequest.getSong();
         MultipartFile imageMultipartFile = musicRequest.getImage();
         long dateTime = new Date().getTime();
@@ -59,14 +70,21 @@ public class MusicController {
         music.setCreated(new Date());
         music.setName(musicRequest.getName());
         music.setDescription(musicRequest.getDescription());
-        music.setUser(musicRequest.getUser());
         music.setImage(imageLink);
+        User user = getUserByUsernameWithUserPrinciple(userPrinciple);
+        music.setUser(user);
         music.setSong(songLink);
         musicService.save(music);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    private User getUserByUsernameWithUserPrinciple(UserPrinciple userPrinciple) {
+        User user = userService.findByUsername(userPrinciple.getUsername()).get();
+        return user;
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Music> update(@PathVariable Long id, MusicRequest musicRequest) throws IOException {
+    public ResponseEntity<Music> update(@PathVariable Long id, MusicRequest musicRequest, UserPrinciple userPrinciple) throws IOException {
         MultipartFile songMultipartFile = musicRequest.getSong();
         MultipartFile imageMultipartFile = musicRequest.getImage();
         long dateTime = new Date().getTime();
@@ -77,25 +95,37 @@ public class MusicController {
         FileCopyUtils.copy(imageMultipartFile.getBytes(),
                 new File(fileUpload + IMAGE_URL + imageLink));
         Music music = new Music();
-        music.setId(musicRequest.getId());
+        music.setId(id);
         music.setCategory(musicRequest.getCategory());
         music.setName(musicRequest.getName());
         music.setDescription(musicRequest.getDescription());
-        music.setUser(musicRequest.getUser());
+        User user = getUserByUsernameWithUserPrinciple(userPrinciple);
+        music.setUser(user);
         music.setImage(imageLink);
         music.setSong(songLink);
         musicService.save(music);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Music> delete(@PathVariable Long id) {
         Optional<Music> musicOptional = musicService.findById(id);
         musicService.remove(id);
+        File file = new File(fileUpload + SONG_URL + musicOptional.get().getSong());
+        file.delete();
+        File file1 = new File(fileUpload + IMAGE_URL + musicOptional.get().getImage());
+        file1.delete();
         return new ResponseEntity<>(musicOptional.get(), HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Music> detail(@PathVariable Long id) {
+    public ResponseEntity<Music> detail(@PathVariable Long id, UserPrinciple userPrinciple) {
+        User user = getUserByUsernameWithUserPrinciple(userPrinciple);
         Optional<Music> musicOptional = musicService.findById(id);
+        Recently recently = new Recently();
+        recently.setUser(user);
+        recently.setMusic(musicOptional.get());
+        recentlyService.save(recently);
         return new ResponseEntity<>(musicOptional.get(), HttpStatus.OK);
     }
 }

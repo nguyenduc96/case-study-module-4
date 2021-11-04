@@ -54,17 +54,16 @@ public class LoginController {
 
     @PostMapping("/register")
     public ResponseEntity<?> doRegister(UserForm userForm) throws ParseException {
-
         MultipartFile multipartFile = userForm.getImage();
-        String fileName = multipartFile.getOriginalFilename() ;
+        String fileName = multipartFile.getOriginalFilename();
         String date = String.valueOf(new Date().getTime());
         try {
-            FileCopyUtils.copy(multipartFile.getBytes(), new File(fileUpload+ "\\image\\"+ date + fileName));
+            FileCopyUtils.copy(multipartFile.getBytes(), new File(fileUpload + "\\image\\" + date + fileName));
         } catch (IOException e) {
             e.printStackTrace();
         }
         List<Role> roles = new ArrayList<>();
-        roles.add(new Role(2L,"ROLE_USER"));
+        roles.add(new Role(2L, "ROLE_USER"));
         User user = new User();
         user.setId(userForm.getId());
         user.setBirthday(new SimpleDateFormat("yyyy-MM-dd").parse(userForm.getBirthday()));
@@ -73,10 +72,10 @@ public class LoginController {
         user.setPhone(userForm.getPhone());
         user.setUsername(userForm.getUsername());
         user.setPassword(userForm.getPassword());
-        user.setImage(date+fileName);
+        user.setImage(date + fileName);
         user.setRoles(roles);
         userService.save(user);
-        return new ResponseEntity<>(user,HttpStatus.CREATED);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
 }

@@ -31,16 +31,12 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<Category> detail(@PathVariable Long id) {
         Optional<Category> categoryOptional = categoryService.findById(id);
-        if (!categoryOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(categoryOptional.get(), HttpStatus.OK);
     }
     @PutMapping("/{id}")
     public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody Category category) {
-        Optional<Category> categoryOptional = categoryService.findById(id);
-        if (!categoryOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (category.getId() == null) {
+            category.setId(id);
         }
         categoryService.save(category);
         return new ResponseEntity<>(category, HttpStatus.OK);
@@ -52,12 +48,8 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Category> delete(@PathVariable Long id) {
-        Optional<Category> categoryOptional = categoryService.findById(id);
-        if (!categoryOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         categoryService.remove(id);
-        return new ResponseEntity<>(categoryOptional.get(), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

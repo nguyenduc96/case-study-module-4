@@ -21,6 +21,9 @@ public class RecentlyController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Recently> update(@PathVariable Long id, Recently recently) {
+        if (recently.getId() == null) {
+            recently.setId(id);
+        }
         return new ResponseEntity<>(recentlyService.save(recently), HttpStatus.OK);
     }
 
