@@ -1,5 +1,6 @@
 package com.group3.models.category;
 
+import com.group3.models.music.Music;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,4 +13,5 @@ public class Category {
     private Long id;
 
     private String name;
+
 }

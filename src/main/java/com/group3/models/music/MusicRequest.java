@@ -3,6 +3,7 @@ package com.group3.models.music;
 import com.group3.models.category.Category;
 import com.group3.models.user.User;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -19,9 +20,9 @@ public class MusicRequest {
 
     private Long downloads = 0L;
 
-    private String image;
+    private MultipartFile image;
 
-    private String song;
+    private MultipartFile song;
 
     private boolean vip = false;
 
