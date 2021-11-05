@@ -40,12 +40,15 @@ public class UserController {
 
     @Secured("ROLE_ADMIN")
     @GetMapping ("/getAll")
-    public ResponseEntity<?> adminPage(@PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false) String q) {
+    public ResponseEntity<?> adminPage(@PageableDefault(size = 3) Pageable pageable, @RequestParam(required = false) String q) {
         Page<User> users;
-        if(q.equals("") || q == null) {
+        if(q==null) {
+            q= "";
+        }
+        if(q.equals("") ) {
             users = userService.findAll(pageable);
         } else {
-            users = userService.findByUsernameContaining(q);
+            users = userService.findByUsernameContaining(q, pageable);
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
@@ -62,7 +65,7 @@ public class UserController {
 
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PostMapping
-    public ResponseEntity<?> saveUser(@RequestBody UserForm userForm) throws ParseException {
+    public ResponseEntity<?> saveUser(UserForm userForm) throws ParseException {
         MultipartFile multipartFile = null;
         String fileName = "";
         if(userForm.getImage() != null) {
@@ -94,7 +97,7 @@ public class UserController {
     }
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<?> editUser(@RequestBody UserForm userForm, @PathVariable Long id ) {
+    public ResponseEntity<?> editUser( UserForm userForm, @PathVariable Long id ) {
         Optional<User> user1 = userService.findById(id);
         if (!user1.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

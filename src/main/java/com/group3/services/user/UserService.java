@@ -62,7 +62,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Page<User> findByUsernameContaining(String username) {
-        return userRepository.findByUsernameContaining(username);
+    public Page<User> findByUsernameContaining(String username, Pageable pageable) {
+        return userRepository.findByUsernameContaining(username, pageable);
     }
 }
