@@ -14,8 +14,10 @@ public class Playlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
-    private List<User> user;
+    @ManyToOne
+    private User user;
+
+    private String image;
 
     @ManyToMany
     private List<Music> music;

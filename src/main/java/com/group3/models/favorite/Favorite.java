@@ -14,9 +14,9 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
-    private List<User> user;
+    @ManyToOne
+    private User user;
 
-    @ManyToMany
-    private List<Music> music;
+    @ManyToOne
+    private Music music;
 }
