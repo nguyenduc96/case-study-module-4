@@ -60,7 +60,7 @@ public class UserController {
         if(!user.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
@@ -95,6 +95,7 @@ public class UserController {
         userService.save(user);
         return new ResponseEntity<>(user,HttpStatus.CREATED);
     }
+
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<?> editUser( UserForm userForm, @PathVariable Long id ) {
@@ -108,6 +109,8 @@ public class UserController {
         if(userForm.getImage() != null) {
             multipartFile = userForm.getImage();
             fileName = multipartFile.getOriginalFilename() ;
+        }else{
+            fileName = user1.get().getImage();
         }
 
         String date = String.valueOf(new Date().getTime());
@@ -149,6 +152,21 @@ public class UserController {
         userService.remove(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @DeleteMapping("/image/{id}")
+    public ResponseEntity<?> deleteUserImage(@PathVariable Long id) {
+        Optional<User> user = userService.findById(id);
+        if(!user.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        deleteOldImage(user);
+        User userEdited = user.get();
+        userEdited.setImage(null);
+        userService.save(userEdited);
+        return new ResponseEntity<>(userEdited,HttpStatus.OK);
+    }
+
 
     private void copyImageToFolder(MultipartFile multipartFile, String fileName, String date) {
         if(multipartFile != null) {
