@@ -31,7 +31,7 @@ import java.util.Optional;
 @RequestMapping("/users")
 @CrossOrigin("*")
 public class UserController {
-    public static final String IMAGE_PATH = "image\\";
+    public static final String IMAGE_PATH = "image/";
     @Value("${file-upload}")
     private String fileUpload;
 
