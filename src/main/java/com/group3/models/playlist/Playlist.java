@@ -17,6 +17,8 @@ public class Playlist {
     @ManyToOne
     private User user;
 
+    private String image;
+
     @ManyToMany
     private List<Music> music;
 
