@@ -1,5 +1,6 @@
 package com.group3.controller;
 
+import com.group3.models.category.Category;
 import com.group3.models.music.Music;
 import com.group3.models.music.MusicRequest;
 import com.group3.models.recently.Recently;
@@ -54,15 +55,16 @@ public class MusicController {
         }
         return new ResponseEntity<>(musicPage, HttpStatus.OK);
     }
+
     @PostMapping
     public ResponseEntity<Music> create(MusicRequest musicRequest, UserPrinciple userPrinciple) throws IOException {
         MultipartFile songMultipartFile = musicRequest.getSong();
         MultipartFile imageMultipartFile = musicRequest.getImage();
         long dateTime = new Date().getTime();
         String songLink = dateTime + songMultipartFile.getOriginalFilename();
-        String imageLink = dateTime +  imageMultipartFile.getOriginalFilename();
+        String imageLink = dateTime + imageMultipartFile.getOriginalFilename();
         FileCopyUtils.copy(songMultipartFile.getBytes(),
-                new File(fileUpload + SONG_URL +  songLink));
+                new File(fileUpload + SONG_URL + songLink));
         FileCopyUtils.copy(imageMultipartFile.getBytes(),
                 new File(fileUpload + IMAGE_URL + imageLink));
         Music music = new Music();
@@ -89,9 +91,9 @@ public class MusicController {
         MultipartFile imageMultipartFile = musicRequest.getImage();
         long dateTime = new Date().getTime();
         String songLink = dateTime + songMultipartFile.getOriginalFilename();
-        String imageLink = dateTime +  imageMultipartFile.getOriginalFilename();
+        String imageLink = dateTime + imageMultipartFile.getOriginalFilename();
         FileCopyUtils.copy(songMultipartFile.getBytes(),
-                new File(fileUpload + SONG_URL +  songLink));
+                new File(fileUpload + SONG_URL + songLink));
         FileCopyUtils.copy(imageMultipartFile.getBytes(),
                 new File(fileUpload + IMAGE_URL + imageLink));
         Music music = new Music();

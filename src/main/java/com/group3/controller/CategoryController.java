@@ -1,7 +1,9 @@
 package com.group3.controller;
 
 import com.group3.models.category.Category;
+import com.group3.models.music.Music;
 import com.group3.services.category.ICategoryService;
+import com.group3.services.music.IMusicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,13 +21,16 @@ public class CategoryController {
     @Autowired
     private ICategoryService categoryService;
 
+    @Autowired
+    private IMusicService musicService;
+
     @GetMapping
     public ResponseEntity<Page<Category>> getAll(Pageable pageable) {
         Page<Category> categoryPage = categoryService.findAll(pageable);
         if (categoryPage.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(categoryPage,HttpStatus.OK);
+        return new ResponseEntity<>(categoryPage, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -33,6 +38,19 @@ public class CategoryController {
         Optional<Category> categoryOptional = categoryService.findById(id);
         return new ResponseEntity<>(categoryOptional.get(), HttpStatus.OK);
     }
+
+    @GetMapping("/{id}/musics")
+    public ResponseEntity<Page<Music>> getAllByMusic(@PathVariable Long id, @RequestParam(name = "q") String q, Pageable pageable) {
+        Optional<Category> categoryOptional = categoryService.findById(id);
+        Page<Music> musicPage;
+        if (q == null || q.isEmpty()) {
+            musicPage = musicService.findAllByNameWithCategory(categoryOptional.get().getId(), q, pageable);
+        } else {
+            musicPage = musicService.findAllByCategory(categoryOptional.get(), pageable);
+        }
+        return new ResponseEntity<>(musicPage, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody Category category) {
         if (category.getId() == null) {

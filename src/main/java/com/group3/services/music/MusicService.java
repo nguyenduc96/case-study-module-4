@@ -1,5 +1,6 @@
 package com.group3.services.music;
 
+import com.group3.models.category.Category;
 import com.group3.models.music.Music;
 import com.group3.repositories.music.IMusicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,16 @@ public class MusicService implements IMusicService {
 
     @Override
     public Page<Music> findAllByNameContaining(String name, Pageable pageable) {
-        return null;
+        return musicRepository.findAllByNameContaining(name, pageable);
     }
 
+    @Override
+    public Page<Music> findAllByCategory(Category category, Pageable pageable) {
+        return musicRepository.findAllByCategory(category, pageable);
+    }
+
+    @Override
+    public Page<Music> findAllByNameWithCategory(Long category_id, String name, Pageable pageable) {
+        return musicRepository.findAllByNameWithCategory(category_id, name, pageable);
+    }
 }
