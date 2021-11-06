@@ -63,7 +63,7 @@ public class UserController {
         return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
-    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+//    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PostMapping
     public ResponseEntity<?> saveUser(UserForm userForm) throws ParseException {
         MultipartFile multipartFile = null;

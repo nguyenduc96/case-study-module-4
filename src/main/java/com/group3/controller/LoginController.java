@@ -19,6 +19,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
@@ -45,6 +47,10 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<?> doLogin(@RequestBody User user) {
+        Optional<User> userOptional = userService.findByUsername(user.getUsername());
+        if(!userOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtService.generateTokenLogin(authentication);
@@ -53,30 +59,30 @@ public class LoginController {
         return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), currentUser.getFullName(), userDetails.getAuthorities()));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> doRegister(UserForm userForm) throws ParseException {
-        MultipartFile multipartFile = userForm.getImage();
-        String fileName = multipartFile.getOriginalFilename();
-        String date = String.valueOf(new Date().getTime());
-        try {
-            FileCopyUtils.copy(multipartFile.getBytes(), new File(fileUpload + "\\image\\" + date + fileName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        List<Role> roles = new ArrayList<>();
-        roles.add(new Role(2L, "ROLE_USER"));
-        User user = new User();
-        user.setId(userForm.getId());
-        user.setBirthday(new SimpleDateFormat("yyyy-MM-dd").parse(userForm.getBirthday()));
-        user.setEmail(userForm.getEmail());
-        user.setFullName(userForm.getFullName());
-        user.setPhone(userForm.getPhone());
-        user.setUsername(userForm.getUsername());
-        user.setPassword(userForm.getPassword());
-        user.setImage(date + fileName);
-        user.setRoles(roles);
-        userService.save(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<?> doRegister(UserForm userForm) throws ParseException {
+//        MultipartFile multipartFile = userForm.getImage();
+//        String fileName = multipartFile.getOriginalFilename();
+//        String date = String.valueOf(new Date().getTime());
+//        try {
+//            FileCopyUtils.copy(multipartFile.getBytes(), new File(fileUpload + "\\image\\" + date + fileName));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        List<Role> roles = new ArrayList<>();
+//        roles.add(new Role(2L, "ROLE_USER"));
+//        User user = new User();
+//        user.setId(userForm.getId());
+//        user.setBirthday(new SimpleDateFormat("yyyy-MM-dd").parse(userForm.getBirthday()));
+//        user.setEmail(userForm.getEmail());
+//        user.setFullName(userForm.getFullName());
+//        user.setPhone(userForm.getPhone());
+//        user.setUsername(userForm.getUsername());
+//        user.setPassword(userForm.getPassword());
+//        user.setImage(date + fileName);
+//        user.setRoles(roles);
+//        userService.save(user);
+//        return new ResponseEntity<>(user, HttpStatus.CREATED);
+//    }
 
 }
