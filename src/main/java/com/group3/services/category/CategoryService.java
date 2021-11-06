@@ -39,4 +39,9 @@ public class CategoryService implements ICategoryService{
     public void remove(Long id) {
         categoryRepository.deleteById(id);
     }
+
+    @Override
+    public Category getCategoryByMusicId(Long musicId) {
+        return categoryRepository.getCategoryByMusicId(musicId);
+    }
 }

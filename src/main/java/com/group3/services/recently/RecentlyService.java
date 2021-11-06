@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,5 +38,10 @@ public class RecentlyService implements IRecentlyService {
     @Override
     public void remove(Long id) {
         recentlyRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Long> allMusicsViews() {
+        return recentlyRepository.allMusicsViews();
     }
 }

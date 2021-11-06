@@ -14,5 +14,4 @@ public interface IMusicService extends IGeneralService<Music> {
     Page<Music> findAllByCategory(Category category, Pageable pageable);
 
     Page<Music> findAllByNameWithCategory(Long category_id, String name, Pageable pageable);
-
 }

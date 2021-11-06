@@ -22,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -73,7 +75,10 @@ public class MusicController {
         music.setName(musicRequest.getName());
         music.setDescription(musicRequest.getDescription());
         music.setImage(imageLink);
-        User user = getUserByUsernameWithUserPrinciple(userPrinciple);
+//        User user = getUserByUsernameWithUserPrinciple(userPrinciple);
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("admin");
         music.setUser(user);
         music.setSong(songLink);
         musicService.save(music);
@@ -122,9 +127,13 @@ public class MusicController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Music> detail(@PathVariable Long id, UserPrinciple userPrinciple) {
-        User user = getUserByUsernameWithUserPrinciple(userPrinciple);
+//        User user = getUserByUsernameWithUserPrinciple(userPrinciple);
+
         Optional<Music> musicOptional = musicService.findById(id);
         Recently recently = new Recently();
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("admin");
         recently.setUser(user);
         recently.setMusic(musicOptional.get());
         recentlyService.save(recently);

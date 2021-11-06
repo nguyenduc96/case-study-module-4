@@ -4,6 +4,7 @@ import com.group3.models.category.Category;
 import com.group3.models.music.Music;
 import com.group3.services.category.ICategoryService;
 import com.group3.services.music.IMusicService;
+import com.group3.services.recently.IRecentlyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,11 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
 @RequestMapping("/categories")
+@CrossOrigin("*")
 public class CategoryController {
 
     @Autowired
@@ -23,6 +25,9 @@ public class CategoryController {
 
     @Autowired
     private IMusicService musicService;
+
+    @Autowired
+    private IRecentlyService recentlyService;
 
     @GetMapping
     public ResponseEntity<Page<Category>> getAll(Pageable pageable) {
@@ -40,10 +45,10 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}/musics")
-    public ResponseEntity<Page<Music>> getAllByMusic(@PathVariable Long id, @RequestParam(name = "q") String q, Pageable pageable) {
+    public ResponseEntity<Page<Music>> getAllByMusic(@PathVariable Long id, @RequestParam(name = "q",required = false) String q, Pageable pageable) {
         Optional<Category> categoryOptional = categoryService.findById(id);
         Page<Music> musicPage;
-        if (q == null || q.isEmpty()) {
+        if (q != null) {
             musicPage = musicService.findAllByNameWithCategory(categoryOptional.get().getId(), q, pageable);
         } else {
             musicPage = musicService.findAllByCategory(categoryOptional.get(), pageable);
@@ -69,5 +74,16 @@ public class CategoryController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         categoryService.remove(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<Set<Category>> getTopMusic() {
+        List<Long> ids = recentlyService.allMusicsViews();
+        Set<Category> categories = new HashSet<>();
+        for (Long musicId : ids) {
+            Category category = categoryService.getCategoryByMusicId(musicId);
+            categories.add(category);
+        }
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 }
