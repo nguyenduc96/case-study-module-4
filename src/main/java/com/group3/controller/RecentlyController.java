@@ -32,4 +32,10 @@ public class RecentlyController {
         recentlyService.remove(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping
+    public ResponseEntity<Recently> addNew(@RequestBody Recently recently) {
+        Recently recently1 =  recentlyService.save(recently);
+        return new ResponseEntity<>(recently1, HttpStatus.CREATED);
+    }
 }

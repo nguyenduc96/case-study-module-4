@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.ReactiveSortHandlerMethodArgumentResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -166,6 +167,38 @@ public class UserController {
         userService.save(userEdited);
         return new ResponseEntity<>(userEdited,HttpStatus.OK);
     }
+
+    @PostMapping("/validated/username")
+    public ResponseEntity<?> validateUserName(@RequestBody User user) {
+        if(userService.findByUsername(user.getUsername()).isPresent()) {
+           Optional<User> userFindByUsername = userService.findByUsername(user.getUsername());
+            return new ResponseEntity<>(userFindByUsername.get(), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(new User(), HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/validated/email")
+    public ResponseEntity<?> validateUserEmail(@RequestBody User user) {
+         if(userService.findByEmail(user.getEmail()).isPresent()) {
+            Optional<User> userFindByEmail = userService.findByEmail(user.getEmail());
+            return new ResponseEntity<>(userFindByEmail.get(), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(new User(), HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/validated/phone")
+    public ResponseEntity<?> validateUserPhone(@RequestBody User user) {
+       if(userService.findByPhone(user.getPhone()).isPresent()) {
+            Optional<User> userFindByPhone = userService.findByPhone(user.getPhone());
+            return new ResponseEntity<>(userFindByPhone.get(), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(new User(), HttpStatus.OK);
+        }
+    }
+
+
 
 
     private void copyImageToFolder(MultipartFile multipartFile, String fileName, String date) {
