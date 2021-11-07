@@ -1,13 +1,19 @@
 package com.group3.controller;
 
+import com.group3.models.music.Music;
 import com.group3.models.playlist.Playlist;
 import com.group3.models.recently.Recently;
+import com.group3.services.music.IMusicService;
 import com.group3.services.playlist.IPlaylistService;
 import com.group3.services.playlist.PlaylistService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -16,9 +22,12 @@ public class PlaylistController {
     @Autowired
     private IPlaylistService playlistService;
 
+    @Autowired
+    private IMusicService musicService;
+
     @GetMapping("/{id}")
-    public ResponseEntity<Iterable<Playlist>> getAll(@PathVariable Long id) {
-        return new ResponseEntity<>(playlistService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<Music>> getAll(@PathVariable Long id) {
+       return new ResponseEntity<>(musicService.findAllByPlaylistId(id), HttpStatus.OK);
     }
 
 //    @PutMapping("/{id}")

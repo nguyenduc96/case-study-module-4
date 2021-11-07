@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,11 @@ public class MusicService implements IMusicService {
     @Override
     public Page<Music> findAllByNameContaining(String name, Pageable pageable) {
         return null;
+    }
+
+    @Override
+    public List<Music> findAllByPlaylistId(Long playlist_id) {
+        return musicRepository.findAllByPlaylistId(playlist_id);
     }
 
 }
