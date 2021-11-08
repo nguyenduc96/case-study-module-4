@@ -44,4 +44,17 @@ public class RecentlyService implements IRecentlyService {
     public List<Long> allMusicsViews() {
         return recentlyRepository.allMusicsViews();
     }
+
+    @Override
+    public List<Recently> findByUserId(Long userId) {
+        return recentlyRepository.findByUserId(userId);
+    }
+
+    @Override
+    public void deleteByMusicId(Long musicId) {
+        List<Recently> recentlies = recentlyRepository.findByMusicId(musicId);
+        if (recentlies != null) {
+            recentlyRepository.deleteByMusicId(musicId);
+        }
+    }
 }

@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface IRecentlyService extends IGeneralService<Recently> {
     List<Long> allMusicsViews();
+
+    List<Recently> findByUserId(Long userId);
+
+    void deleteByMusicId(Long musicId);
 }

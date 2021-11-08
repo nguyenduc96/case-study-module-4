@@ -53,6 +53,11 @@ public class MusicService implements IMusicService {
     }
 
     @Override
+    public List<Music> findAllByPlaylistId(Long playlist_id) {
+        return musicRepository.findAllByPlaylistId(playlist_id);
+    }
+
+    @Override
     public Page<Music> findAllByNameWithCategory(Long category_id, String name, Pageable pageable) {
         return musicRepository.findAllByNameWithCategory(category_id, name, pageable);
     }
@@ -60,5 +65,15 @@ public class MusicService implements IMusicService {
     @Override
     public List<Music> findMusicRandom() {
         return musicRepository.findMusicRandom();
+    }
+
+    @Override
+    public Page<Music> findMusicByUserId(Long user_id, Pageable pageable) {
+        return musicRepository.findMusicByUserId(user_id, pageable);
+    }
+
+    @Override
+    public Page<Music> findMusicByFavoriteAndUserId(Long user_id, Pageable pageable) {
+        return musicRepository.findMusicByFavoriteAndUserId(user_id, pageable);
     }
 }

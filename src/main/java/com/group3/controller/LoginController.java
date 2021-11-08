@@ -52,7 +52,7 @@ public class LoginController {
         User currentUser = userService.findByUsername(user.getUsername()).get();
         return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), currentUser.getFullName(), userDetails.getAuthorities()));
     }
-//
+
 //    @PostMapping("/register")
 //    public ResponseEntity<?> doRegister(UserForm userForm) throws ParseException {
 //        MultipartFile multipartFile = userForm.getImage();

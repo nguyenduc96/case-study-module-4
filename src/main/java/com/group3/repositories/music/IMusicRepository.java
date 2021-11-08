@@ -22,4 +22,12 @@ public interface IMusicRepository extends JpaRepository<Music, Long> {
 
     @Query(value="SELECT * FROM music AS m JOIN (SELECT id FROM music ORDER BY RAND() LIMIT 10) as m2 ON m.id=m2.id;", nativeQuery = true)
     List<Music> findMusicRandom();
+
+    @Query(value = "select * from music m join playlist_music pl on m.id = pl.music_id where pl.playlist_id = ?1", nativeQuery = true)
+    List<Music> findAllByPlaylistId(@Param("1") Long playlist_id);
+
+    Page<Music> findMusicByUserId(Long user_id, Pageable pageable);
+
+    @Query(value = "select * from music m join favorite f where f.music_id = m.id and f.user_id = ?1", nativeQuery = true)
+    Page<Music> findMusicByFavoriteAndUserId(@Param("1")Long user_id, Pageable pageable);
 }

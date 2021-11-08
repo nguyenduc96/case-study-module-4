@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface IUserService extends IGeneralService<User>, UserDetailsService {
     public Optional<User> findByUsername(String username);
     Page<User> findByUsernameContaining(String username, Pageable pageable);
+    Optional<User> findByEmail(String email);
+    Optional<User> findByPhone(String phone);
 }
