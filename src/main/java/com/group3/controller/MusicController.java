@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -119,8 +120,9 @@ public class MusicController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Music> detail(@PathVariable Long id, UserPrinciple userPrinciple) {
-        User user = getUserByUsernameWithUserPrinciple(userPrinciple);
+    public ResponseEntity<Music> detail(@PathVariable Long id, Authentication authentication) {
+        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
+        User user = userService.findByUsername(userPrinciple.getUsername()).get();
         Optional<Music> musicOptional = musicService.findById(id);
         Recently recently = new Recently();
         recently.setUser(user);

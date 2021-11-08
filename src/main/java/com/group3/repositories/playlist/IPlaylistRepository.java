@@ -13,5 +13,4 @@ import java.util.List;
 
 @Repository
 public interface IPlaylistRepository extends JpaRepository<Playlist, Long> {
-
 }
