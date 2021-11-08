@@ -139,4 +139,10 @@ public class MusicController {
         recentlyService.save(recently);
         return new ResponseEntity<>(musicOptional.get(), HttpStatus.OK);
     }
+
+    @GetMapping("/random")
+    public ResponseEntity<List<Music>> getMusicRandom() {
+        List<Music> musicList = musicService.findMusicRandom();
+        return new ResponseEntity<>(musicList, HttpStatus.OK);
+    }
 }

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface IMusicRepository extends JpaRepository<Music, Long> {
     Page<Music> findAllByNameContaining(String name, Pageable pageable);
@@ -17,4 +19,7 @@ public interface IMusicRepository extends JpaRepository<Music, Long> {
 
     @Query(value = "SELECT * FROM music m WHERE m.category_id = ?1 AND m.name LIKE ?2", nativeQuery = true)
     Page<Music> findAllByNameWithCategory(@Param("1") Long category_id, @Param("2") String name, Pageable pageable);
+
+    @Query(value="SELECT * FROM music AS m JOIN (SELECT id FROM music ORDER BY RAND() LIMIT 10) as m2 ON m.id=m2.id;", nativeQuery = true)
+    List<Music> findMusicRandom();
 }

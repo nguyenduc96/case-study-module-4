@@ -8,10 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface IMusicService extends IGeneralService<Music> {
     Page<Music> findAllByNameContaining(String name, Pageable pageable);
 
     Page<Music> findAllByCategory(Category category, Pageable pageable);
 
     Page<Music> findAllByNameWithCategory(Long category_id, String name, Pageable pageable);
+
+    List<Music> findMusicRandom();
 }

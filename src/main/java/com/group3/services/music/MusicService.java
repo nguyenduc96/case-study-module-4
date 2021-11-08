@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -54,5 +55,10 @@ public class MusicService implements IMusicService {
     @Override
     public Page<Music> findAllByNameWithCategory(Long category_id, String name, Pageable pageable) {
         return musicRepository.findAllByNameWithCategory(category_id, name, pageable);
+    }
+
+    @Override
+    public List<Music> findMusicRandom() {
+        return musicRepository.findMusicRandom();
     }
 }
