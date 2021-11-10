@@ -18,8 +18,7 @@ import java.util.Optional;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/playlists")
-public class PlaylistController {
-
+public class  PlaylistController {
     @Autowired
     private IPlaylistService playlistService;
 
@@ -34,8 +33,8 @@ public class PlaylistController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<Music>> getAll(@PathVariable Long id) {
-        return new ResponseEntity<>(musicService.findAllByPlaylistId(id), HttpStatus.OK);
+    public ResponseEntity<Playlist> getAll(@PathVariable Long id) {
+       return new ResponseEntity<>(playlistService.findById(id).get(), HttpStatus.OK);
     }
 
     @PostMapping

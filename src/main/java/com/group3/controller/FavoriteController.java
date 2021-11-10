@@ -1,72 +1,66 @@
 package com.group3.controller;
 
-
 import com.group3.models.favorite.Favorite;
-import com.group3.models.music.Music;
-import com.group3.models.user.User;
-import com.group3.models.user.UserPrinciple;
-import com.group3.services.JwtService;
 import com.group3.services.favorite.IFavoriteService;
-import com.group3.services.music.IMusicService;
 import com.group3.services.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.context.annotation.Role;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
 
-@RestController
+
 @CrossOrigin("*")
+@Controller
 @RequestMapping("/favorites")
 public class FavoriteController {
-
     @Autowired
     private IFavoriteService favoriteService;
 
     @Autowired
-    private JwtService jwtService;
-
-    @Autowired
     private IUserService userService;
 
-    @Autowired
-    private IMusicService musicService;
-
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
-    public ResponseEntity<Iterable<Favorite>> allFavorite(){
-        return new ResponseEntity<>(favoriteService.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> showAll(@PageableDefault(size = 10) Pageable pageable) {
+        return new ResponseEntity<>(favoriteService.findAll(pageable), HttpStatus.OK);
+    }
+
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable Long id) {
+        if(!favoriteService.findById(id).isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(favoriteService.findById(id).get(), HttpStatus.OK);
+    }
+
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/user/{id}")
+    public ResponseEntity<?> getFavoriteByUserId(@PathVariable Long id, Pageable pageable) {
+        if(!userService.findById(id).isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(favoriteService.findByUserId(id, pageable),HttpStatus.OK );
     }
 
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PostMapping
-    public ResponseEntity<Favorite> createFavorite(@RequestBody Favorite favorite, Authentication authentication){
-        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
-        User user = userService.findByUsername(userPrinciple.getUsername()).get();
-        favorite.setUser(user);
+    public ResponseEntity<?> addNewFavorite(@RequestBody Favorite favorite) {
         return new ResponseEntity<>(favoriteService.save(favorite), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Favorite> update(@PathVariable Long id, @RequestBody Favorite favorite){
-        Optional<Favorite> favorite1 = favoriteService.findById(id);
-        if(!favorite1.isPresent()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        favorite.setId(id);
-        return new ResponseEntity<>(favoriteService.save(favorite), HttpStatus.OK);
     }
 
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
-        Optional<Favorite> favorite = favoriteService.findById(id);
-        if(!favorite.isPresent()){
+    public ResponseEntity<?> deleteFavorite(@PathVariable Long id) {
+        Optional<Favorite> favoriteOptional = favoriteService.findById(id);
+        if(!favoriteOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         favoriteService.remove(id);
@@ -74,19 +68,13 @@ public class FavoriteController {
     }
 
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
-    @GetMapping("/user/musics")
-    public ResponseEntity<Page<Music>> getMusicByUserWithFavorite(Authentication authentication, Pageable pageable) {
-        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
-        User user = userService.findByUsername(userPrinciple.getUsername()).get();
-        return new ResponseEntity<>(musicService.findMusicByFavoriteAndUserId(user.getId(), pageable), HttpStatus.OK);
+    @PutMapping ("/{id}")
+    public ResponseEntity<?> editFavorite(@PathVariable Long id, Favorite favorite) {
+        Optional<Favorite> favoriteOptional = favoriteService.findById(id);
+        if(!favoriteOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        favoriteService.save(favorite);
+        return new ResponseEntity<>(favorite,HttpStatus.OK);
     }
-
-//
-//    @Secured({"ROLE_USER", "ROLE_ADMIN"})
-//    @GetMapping("/user")
-//    public ResponseEntity<Iterable<Favorite>> getUserFavorites(Authentication authentication){
-//        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
-//        User user = userService.findByUsername(userPrinciple.getUsername()).get();
-//        return new ResponseEntity<>(favoriteService.findByUser(user), HttpStatus.OK);
-//    }
 }

@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Service
 public class FavoriteService implements IFavoriteService {
-
     @Autowired
     private IFavoriteRepository favoriteRepository;
 
@@ -39,6 +38,11 @@ public class FavoriteService implements IFavoriteService {
     @Override
     public void remove(Long id) {
         favoriteRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Favorite> findByUserId(Long id, Pageable pageable) {
+        return favoriteRepository.findByUserId(id, pageable);
     }
 
     @Override

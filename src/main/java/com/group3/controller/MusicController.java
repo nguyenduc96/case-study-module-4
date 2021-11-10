@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,7 +65,7 @@ public class MusicController {
     private IFavoriteService favoriteService;
 
     @GetMapping
-    public ResponseEntity<?> getAll(@RequestParam(name = "m") Optional<String> m, @PageableDefault(size = 5) Pageable pageable) {
+    public ResponseEntity<?> getAll(@RequestParam(name = "m") Optional<String> m, @PageableDefault(size = 20) Pageable pageable) {
         Page<Music> musicPage;
         if (m.isPresent()) {
             musicPage = musicService.findAllByNameContaining(m.get(), pageable);
@@ -128,18 +129,33 @@ public class MusicController {
             long dateTime = new Date().getTime();
             String songLink = dateTime + songMultipartFile.getOriginalFilename();
             String imageLink = dateTime + imageMultipartFile.getOriginalFilename();
-            FileCopyUtils.copy(songMultipartFile.getBytes(),
-                    new File(fileUpload + SONG_URL + songLink));
-            FileCopyUtils.copy(imageMultipartFile.getBytes(),
-                    new File(fileUpload + IMAGE_URL + imageLink));
+            if(songMultipartFile == null) {
+                songLink = musicOptional.get().getSong();
+            }else {
+                FileCopyUtils.copy(songMultipartFile.getBytes(),
+                        new File(fileUpload + SONG_URL + songLink));
+            }
+            if(imageMultipartFile == null) {
+                imageLink = musicOptional.get().getImage();
+            } else {
+
+                FileCopyUtils.copy(imageMultipartFile.getBytes(),
+                        new File(fileUpload + IMAGE_URL + imageLink));
+            }
             Music music = new Music();
             music.setId(id);
+            music.setImage(imageLink);
+            music.setSong(songLink);
+            if (musicRequest.getImage() == null) {
+                music.setImage(musicOptional.get().getImage());
+            }
+            if (musicRequest.getSong() == null) {
+                music.setSong(musicOptional.get().getSong());
+            }
             music.setCategory(musicRequest.getCategory());
             music.setName(musicRequest.getName());
             music.setDescription(musicRequest.getDescription());
             music.setUser(user);
-            music.setImage(imageLink);
-            music.setSong(songLink);
             musicService.save(music);
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -176,5 +192,22 @@ public class MusicController {
     public ResponseEntity<List<Music>> getMusicRandom() {
         List<Music> musicList = musicService.findMusicRandom();
         return new ResponseEntity<>(musicList, HttpStatus.OK);
+    }
+
+    private void copyImageToFolder(MultipartFile multipartFile, String fileName, String date) {
+        if(multipartFile != null) {
+            try {
+                FileCopyUtils.copy(multipartFile.getBytes(), new File(fileUpload + IMAGE_URL + date + fileName));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void deleteOldImage(Optional<User> user1) {
+        if(user1.get().getImage()!=null) {
+            File fileImage = new File(fileUpload + IMAGE_URL + user1.get().getImage());
+            fileImage.delete();
+        }
     }
 }
